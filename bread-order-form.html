@@ -312,14 +312,10 @@
   document.getElementById('todayLabel').textContent = todayStr();
 
   /* ── Config ── */
-  const savedUrl = localStorage.getItem('fbUrl_bread');
-  if (savedUrl) {
-    document.getElementById('fbUrl').value = savedUrl;
-    initFB(savedUrl);
-  } else {
-    document.getElementById('cfgPanel').open = true;
-    setConn(false);
-  }
+  const FIREBASE_URL = 'https://bread-ord-default-rtdb.asia-southeast1.firebasedatabase.app';
+  const savedUrl = localStorage.getItem('fbUrl_bread') || FIREBASE_URL;
+  document.getElementById('fbUrl').value = savedUrl;
+  initFB(savedUrl);
 
   window.saveConfig = () => {
     const url = document.getElementById('fbUrl').value.trim();
