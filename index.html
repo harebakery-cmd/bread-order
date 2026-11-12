@@ -270,6 +270,10 @@
   <div class="section" style="margin-bottom:8px">
     <div class="sec-label"><span class="sec-num">3</span>제품 - 수량</div>
     <textarea id="products" placeholder="예) 바게트-2&#10;단팥빵-10&#10;소금빵-5"></textarea>
+    <div id="portalProductSuggestions" hidden style="margin-top:10px;padding:10px;border-radius:12px;background:var(--surface2)">
+      <div style="font-size:12px;font-weight:800;margin-bottom:8px">포털 등록 품목 · 눌러서 주문에 추가</div>
+      <div data-portal-product-buttons style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    </div>
     <div class="hint">💡 제품명-수량 형식 · 여러 개는 줄바꿈</div>
   </div>
   <button class="btn-submit" id="submitBtn" onclick="submitOrder()">🍞 &nbsp;주문 추가</button>
@@ -524,6 +528,33 @@
     el.className = 'toast' + (err ? ' err' : '') + ' show';
     setTimeout(function() { el.className = 'toast'; }, 2600);
   }
+</script>
+<script>
+/* Receive central product suggestions from the parent work portal. */
+window.addEventListener('message',function(event){
+  if(event.source!==window.parent||event.origin!==location.origin)return;
+  var message=event.data;
+  if(!message||message.type!=='hare-workspace:module-config'||message.moduleId!=='bread-order')return;
+  var items=Array.isArray(message.settings&&message.settings.items)?message.settings.items.map(function(x){return String(x||'').trim();}).filter(Boolean):[];
+  var panel=document.getElementById('portalProductSuggestions');
+  var host=panel&&panel.querySelector('[data-portal-product-buttons]');
+  if(!panel||!host)return;
+  host.textContent='';
+  items.forEach(function(name){
+    var button=document.createElement('button');
+    button.type='button';button.textContent=name;button.dataset.portalItem=name;
+    button.style.cssText='border:1px solid var(--border);border-radius:999px;padding:6px 10px;background:var(--surface);color:var(--text);font:inherit;font-size:12px;font-weight:700;cursor:pointer';
+    host.appendChild(button);
+  });
+  panel.hidden=items.length===0;
+  host.onclick=function(click){
+    var button=click.target.closest('[data-portal-item]');
+    if(!button)return;
+    var input=document.getElementById('products');
+    input.value+=(input.value.trim()?'\\n':'')+button.dataset.portalItem+'-';
+    input.focus();
+  };
+});
 </script>
 </body>
 </html>
