@@ -551,7 +551,7 @@ window.addEventListener('message',function(event){
     var button=click.target.closest('[data-portal-item]');
     if(!button)return;
     var input=document.getElementById('products');
-    input.value+=(input.value.trim()?'\\n':'')+button.dataset.portalItem+'-';
+    input.value+=(input.value.trim()?'\n':'')+button.dataset.portalItem+'-';
     input.focus();
   };
 });
